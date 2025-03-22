@@ -10,7 +10,7 @@ export class AuthController {
 	login(
 		@Query('provider') provider,
 		@AccessToken() accessToken: string,
-	): Promise<{ isNew: boolean; jwt: string }> {
+	): Promise<{ isNewUser: boolean; jwt: string }> {
 		if (provider === 'google') {
 			return this.authService.googleLogin(accessToken);
 		}

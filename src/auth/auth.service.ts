@@ -6,7 +6,7 @@ export class AuthService {
 	constructor(private sessionManager: SessionManagerService) {}
 	async googleLogin(
 		accessToken: string,
-	): Promise<{ isNew: boolean; jwt: string }> {
+	): Promise<{ isNewUser: boolean; jwt: string }> {
 		if (!accessToken) {
 			throw new Error('No access token provided');
 		}
@@ -32,7 +32,7 @@ export class AuthService {
 				alias: googleUser.given_name,
 			});
 
-			return { isNew: isNewUser, jwt: jwt };
+			return { isNewUser: isNewUser, jwt: jwt };
 		} catch (error) {
 			throw new Error(
 				`Error while trying to obtain google token: ${error.message}`,
