@@ -1,11 +1,13 @@
-import type { UserSession } from '@type/index';
-
 import { Injectable } from '@nestjs/common';
+import type { UserSession } from '@type/index';
 import { sign, verify } from 'jsonwebtoken';
+import { MemorySessionManager } from './session.repository';
 
 @Injectable()
 export class SessionManagerService {
-	createSession(payload: UserSession): Promise<string> {
+	constructor(private memorySession: MemorySessionManager) {}
+
+	createSession(payload: UserSession): string {
 		const privateKeyPem = process.env.PRIVATE_JWT_KEY;
 		if (!privateKeyPem) {
 			throw new Error('No private key found');
@@ -17,10 +19,12 @@ export class SessionManagerService {
 			subject: payload.id,
 		});
 
-		return Promise.resolve(token);
+		this.memorySession.addSession(token, payload);
+
+		return token;
 	}
 
-	verifySession(token: string): Promise<UserSession> {
+	verifySession(token: string): UserSession {
 		const publicKeyPem = process.env.PUBLIC_JWT_KEY;
 		if (!publicKeyPem) {
 			throw new Error('No public key found');
@@ -29,7 +33,14 @@ export class SessionManagerService {
 		const decoded = verify(token, publicKeyPem, {
 			algorithms: ['RS256'],
 		}) as UserSession;
+		return decoded;
+	}
 
-		return Promise.resolve(decoded);
+	async removeSession(token: string): Promise<void> {
+		await this.memorySession.removeSession(token);
+	}
+
+	hasSession(token: string): boolean {
+		return this.memorySession.hasSession(token);
 	}
 }
