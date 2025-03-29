@@ -23,7 +23,9 @@
 			"@session/*": ["src/session/*"],
 			"@type/*": ["src/types/*"],
 			"@database/*": ["src/database/*"],
-			"@user/*": ["src/user/*"]
+			"@user/*": ["src/user/*"],
+			"@log/*": ["src/log/*"],
+			"@security/*": ["src/security/*"]
 		}
 	},
 	"include": ["src/**/*.ts"],
