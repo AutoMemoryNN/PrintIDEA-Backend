@@ -9,7 +9,6 @@ export class SessionManagerService {
 
 	createSession(payload: UserSession): string {
 		const privateKeyPem = process.env.PRIVATE_JWT_KEY;
-		console.log('privateKeyPem', privateKeyPem);
 
 		if (!privateKeyPem) {
 			throw new Error('No private key found');

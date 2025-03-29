@@ -19,9 +19,11 @@
 		"noFallthroughCasesInSwitch": false,
 		"paths": {
 			"@app/*": ["src/app/*"],
-			"@auth/*": ["src/auth/*"],
+			"@login/*": ["src/login/*"],
 			"@session/*": ["src/session/*"],
-			"@type/*": ["src/types/*"]
+			"@type/*": ["src/types/*"],
+			"@database/*": ["src/database/*"],
+			"@user/*": ["src/user/*"]
 		}
 	},
 	"include": ["src/**/*.ts"],
