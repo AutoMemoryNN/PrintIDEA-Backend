@@ -1,0 +1,14 @@
+export type CreateOrgDto = {
+	name: string;
+	description: string;
+};
+export type UpdateOrgDto = {
+	name?: string;
+	description?: string;
+};
+
+export type OrgInfo = {
+	id: string;
+	name: string;
+	description: string;
+};
