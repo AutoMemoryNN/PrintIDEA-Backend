@@ -1,3 +1,4 @@
+import { exit } from 'node:process';
 import { ConsoleLogger, Injectable, Scope } from '@nestjs/common';
 
 @Injectable({ scope: Scope.TRANSIENT })
@@ -20,5 +21,18 @@ export class LogService extends ConsoleLogger {
 		...optionalParams: unknown[]
 	): void {
 		super.error(message, context || this.context, ...optionalParams);
+	}
+
+	fatal(
+		message: string,
+		context?: string,
+		...optionalParams: unknown[]
+	): void {
+		super.error(
+			`[FATAL] !!! ${message}`,
+			context || this.context,
+			...optionalParams,
+		);
+		exit(0);
 	}
 }
