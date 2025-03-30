@@ -13,22 +13,23 @@ import {
 	OrgInfo,
 	UpdateOrgDto,
 } from '@org/organization.dto';
-import { OrganizationService } from '@org/organization.service';
+import { Organization, OrganizationService } from '@org/organization.service';
 import { UserId, UserRole } from '@security/security.decorators';
 import { ControllerResponse } from '@type/index';
 
-@Controller('organization')
+@Controller('organizations')
 export class OrganizationController {
 	constructor(private orgService: OrganizationService) {}
 	@Post()
 	createOrganization(
 		@UserId() userId: string,
 		@Body() createOrganizationDto: CreateOrgDto,
-	): ControllerResponse {
+	): ControllerResponse<Organization> {
 		const { name, description } = createOrganizationDto;
 		const newOrg = this.orgService.create(name, description, userId);
 		return {
 			message: `Organization created successfully ${newOrg.id}`,
+			data: newOrg,
 		};
 	}
 

@@ -15,8 +15,10 @@ export class SecurityModule implements NestModule {
 	configure(consumer: MiddlewareConsumer): void {
 		consumer
 			.apply(SessionAuthMiddleware)
-			.exclude({ path: 'login', method: RequestMethod.ALL })
-			.exclude({ path: 'db-test', method: RequestMethod.ALL })
+			.exclude(
+				{ path: 'login', method: RequestMethod.ALL },
+				{ path: 'db-test', method: RequestMethod.ALL },
+			)
 			.forRoutes('*');
 	}
 }

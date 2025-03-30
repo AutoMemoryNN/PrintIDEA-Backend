@@ -7,6 +7,12 @@ export type UpdateOrgDto = {
 	description?: string;
 };
 
+export type OrgPartialInfo = {
+	id?: string;
+	name?: string;
+	description?: string;
+};
+
 export type OrgInfo = {
 	id: string;
 	name: string;
