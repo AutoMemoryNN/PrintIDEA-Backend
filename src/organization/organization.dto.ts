@@ -12,3 +12,8 @@ export type OrgInfo = {
 	name: string;
 	description: string;
 };
+
+export type AddUserDto = {
+	mail: string;
+	role: string;
+};

@@ -37,9 +37,12 @@ export class SessionManagerService {
 		}
 
 		try {
+			const expiresIn =
+				process.env.NODE_ENV === 'production' ? '1h' : '5h';
+
 			const token = sign(payload, privateKeyPem, {
 				algorithm: 'RS256',
-				expiresIn: '2h',
+				expiresIn: expiresIn,
 				subject: payload.id,
 			});
 
