@@ -4,7 +4,7 @@ import {
 	InternalServerErrorException,
 	UnauthorizedException,
 } from '@nestjs/common';
-import type { UserSession } from '@type/index';
+import type { UserDatabase } from '@type/index';
 import {
 	JsonWebTokenError,
 	NotBeforeError,
@@ -23,7 +23,7 @@ export class SessionManagerService {
 
 	readonly context = 'SessionManagerService';
 
-	createSession(payload: UserSession): string {
+	createSession(payload: UserDatabase): string {
 		const privateKeyPem = process.env.PRIVATE_JWT_KEY;
 
 		if (!privateKeyPem) {
@@ -58,7 +58,7 @@ export class SessionManagerService {
 		}
 	}
 
-	verifySession(token: string): UserSession {
+	verifySession(token: string): UserDatabase {
 		const publicKeyPem = process.env.PUBLIC_JWT_KEY;
 		if (!publicKeyPem) {
 			this.logService.fatal(
@@ -73,7 +73,7 @@ export class SessionManagerService {
 		try {
 			const decoded = verify(token, publicKeyPem, {
 				algorithms: ['RS256'],
-			}) as UserSession;
+			}) as UserDatabase;
 
 			return decoded;
 		} catch (error) {
