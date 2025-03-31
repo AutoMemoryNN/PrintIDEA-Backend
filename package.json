@@ -15,7 +15,9 @@
 		"start:debug": "nest start --debug --watch",
 		"start:prod": "node dist/main",
 		"test": "vitest run",
-		"test:ui": "vitest --ui --coverage"
+		"test:ui": "vitest --ui --coverage",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate"
 	},
 	"dependencies": {
 		"@knaadh/nestjs-drizzle-postgres": "1.2.0",
