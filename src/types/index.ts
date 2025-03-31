@@ -1,10 +1,11 @@
-export type UserSession = {
-	id: string;
-	email: string;
-	role: string;
-	username: string;
-	alias: string;
-};
+import {
+	OrgRole,
+	Schema,
+	TaskPriority,
+	TaskStatus,
+	UserRole,
+} from '@database/database.schema';
+import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
 /**
  * Represents a successful response from an controller
@@ -30,3 +31,18 @@ export type UserSession = {
 export type ControllerResponse<T = null> = T extends null
 	? { message: string }
 	: { data: T; message?: string };
+
+export type UserDatabase = typeof Schema.users.$inferSelect;
+
+export type OrganizationDatabase = typeof Schema.organizations.$inferSelect;
+
+export type UserOrganizationDatabase =
+	typeof Schema.userOrganization.$inferSelect;
+
+export type ProjectDatabase = typeof Schema.projects.$inferSelect;
+
+export type TaskDatabase = typeof Schema.tasks.$inferSelect;
+
+export type MainDatabase = PostgresJsDatabase<typeof Schema>;
+
+export { UserRole, OrgRole, TaskStatus, TaskPriority };

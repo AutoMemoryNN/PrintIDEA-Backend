@@ -1,14 +1,14 @@
 import { LogService } from '@log/log.service';
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { SessionManagerService } from '@session/session.service';
-import { UserSession } from '@type/index';
+import { UserDatabase } from '@type/index';
 import { NextFunction, Request, Response } from 'express';
 
 // TODO: find a better place for this type definition
 declare global {
 	namespace Express {
 		interface Request {
-			session?: UserSession;
+			session?: UserDatabase;
 		}
 	}
 }
