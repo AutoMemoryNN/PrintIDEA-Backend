@@ -50,6 +50,7 @@ export const taskPriorityEnum = pgEnum(
 export const users = pgTable('users', {
 	id: varchar('id', { length: 36 }).primaryKey(),
 	name: varchar('name', { length: 100 }).notNull(),
+	alias: varchar('alias', { length: 100 }).notNull(),
 	email: varchar('email', { length: 100 }).notNull().unique(),
 	role: userRoleEnum('role').notNull(),
 });
