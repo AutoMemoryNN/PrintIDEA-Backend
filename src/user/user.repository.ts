@@ -31,4 +31,9 @@ export class UserRepository {
 
 		return result[0];
 	}
+
+	async deleteUserByEmail(email: string): Promise<void> {
+		const users = Schema.users;
+		await this.db.delete(users).where(eq(users.email, email));
+	}
 }

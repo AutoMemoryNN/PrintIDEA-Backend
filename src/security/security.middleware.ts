@@ -20,12 +20,19 @@ export class SessionAuthMiddleware implements NestMiddleware {
 		private logService: LogService,
 	) {}
 
+	readonly context = 'SessionAuthMiddleware';
+
 	use(req: Request, res: Response, next: NextFunction): undefined | Response {
 		if (!req.headers.authorization?.startsWith('Bearer ')) {
+			this.logService.error(
+				'Authorization header is missing or invalid',
+				this.context,
+			);
 			return res.status(401).send('Unauthorized');
 		}
 		const token = req.headers.authorization?.split(' ')[1];
 		if (!token) {
+			this.logService.error('No token provided', this.context);
 			return res.status(401).send('Unauthorized');
 		}
 

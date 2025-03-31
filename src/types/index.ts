@@ -1,9 +1,9 @@
 import {
-	OrgRole,
+	OrgRoles,
 	Schema,
-	TaskPriority,
+	TaskPriorities,
 	TaskStatus,
-	UserRole,
+	UserRoles,
 } from '@database/database.schema';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
@@ -45,4 +45,9 @@ export type TaskDatabase = typeof Schema.tasks.$inferSelect;
 
 export type MainDatabase = PostgresJsDatabase<typeof Schema>;
 
-export { UserRole, OrgRole, TaskStatus, TaskPriority };
+export {
+	UserRoles as UserRole,
+	OrgRoles as OrgRole,
+	TaskStatus,
+	TaskPriorities as TaskPriority,
+};

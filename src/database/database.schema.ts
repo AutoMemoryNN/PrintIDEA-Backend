@@ -10,11 +10,11 @@ import {
 
 import { relations } from 'drizzle-orm';
 
-export enum UserRole {
+export enum UserRoles {
 	ADMIN = 'admin',
 	CLIENT = 'client',
 }
-export enum OrgRole {
+export enum OrgRoles {
 	ADMIN = 'admin',
 	MEMBER = 'member',
 }
@@ -26,7 +26,7 @@ export enum TaskStatus {
 	CANCELLED = 'cancelled',
 }
 
-export enum TaskPriority {
+export enum TaskPriorities {
 	LOW = 'low',
 	MEDIUM = 'medium',
 	HIGH = 'high',
@@ -39,12 +39,12 @@ function enumToPgEnum<T extends Record<string, string>>(
 	return Object.values(tsEnum) as [T[keyof T], ...T[keyof T][]];
 }
 
-export const userRoleEnum = pgEnum('user_role', enumToPgEnum(UserRole));
-export const orgRoleEnum = pgEnum('org_role', enumToPgEnum(OrgRole));
+export const userRoleEnum = pgEnum('user_role', enumToPgEnum(UserRoles));
+export const orgRoleEnum = pgEnum('org_role', enumToPgEnum(OrgRoles));
 export const taskStatusEnum = pgEnum('task_status', enumToPgEnum(TaskStatus));
 export const taskPriorityEnum = pgEnum(
 	'task_priority',
-	enumToPgEnum(TaskPriority),
+	enumToPgEnum(TaskPriorities),
 );
 
 export const users = pgTable('users', {

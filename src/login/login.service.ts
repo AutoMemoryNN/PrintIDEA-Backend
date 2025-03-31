@@ -31,7 +31,6 @@ export class LoginService {
 				);
 			}
 
-			console.log('Google response:', googleResponse);
 			const googleData = await googleResponse.json();
 
 			const googleUser = {
