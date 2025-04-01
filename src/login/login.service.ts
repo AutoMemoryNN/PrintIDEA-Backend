@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SessionManagerService } from '@session/session.service';
-import { UserDatabase, UserRole } from '@type/index';
+import { UserDatabase, UserRoles } from '@type/index';
 import { UserService } from '@user/user.service';
 
 @Injectable()
@@ -41,7 +41,7 @@ export class LoginService {
 			};
 
 			const { isNewUser, user } = await this.resolveUser(
-				this.parseGoogleUserData(googleUser, UserRole.CLIENT),
+				this.parseGoogleUserData(googleUser, UserRoles.CLIENT),
 			);
 
 			const jwt = await this.sessionManager.createSession(user);
@@ -59,7 +59,7 @@ export class LoginService {
 			name: string;
 			givenName: string;
 		},
-		userRole: UserRole,
+		userRole: UserRoles,
 	): UserDatabase {
 		return {
 			id: googleUser.sub,

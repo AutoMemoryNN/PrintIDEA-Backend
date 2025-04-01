@@ -45,9 +45,4 @@ export type TaskDatabase = typeof Schema.tasks.$inferSelect;
 
 export type MainDatabase = PostgresJsDatabase<typeof Schema>;
 
-export {
-	UserRoles as UserRole,
-	OrgRoles as OrgRole,
-	TaskStatus,
-	TaskPriorities as TaskPriority,
-};
+export { UserRoles, OrgRoles, TaskStatus, TaskPriorities };

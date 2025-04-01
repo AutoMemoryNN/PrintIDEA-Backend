@@ -1,19 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import { customAlphabet } from 'nanoid';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class IdService {
-	private readonly nanoid;
+	private nanoid: () => string;
+	private initialized = false;
+	private readonly alphabet =
+		'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+	private readonly length = 12;
 
-	constructor() {
-		this.nanoid = customAlphabet(
-			'0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
-			12,
-		);
+	private async initialize(): Promise<void> {
+		if (!this.initialized) {
+			const { customAlphabet } = await import('nanoid');
+			this.nanoid = customAlphabet(this.alphabet, this.length);
+			this.initialized = true;
+		}
 	}
 
-	generateShortId(): string {
+	async generateShortId(): Promise<string> {
+		await this.initialize();
 		return this.nanoid();
 	}
 
@@ -21,7 +26,8 @@ export class IdService {
 		return uuidv4();
 	}
 
-	generatePrefixedId(prefix: string): string {
-		return `${prefix}_${this.nanoid()}`;
+	async generatePrefixedId(prefix: string): Promise<string> {
+		const id = await this.generateShortId();
+		return `${prefix}_${id}`;
 	}
 }
