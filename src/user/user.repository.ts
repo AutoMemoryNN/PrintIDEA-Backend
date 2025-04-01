@@ -7,7 +7,8 @@ import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 @Injectable()
 export class UserRepository {
 	constructor(
-		@Inject('APP-DB') private db: PostgresJsDatabase<typeof Schema>,
+		@Inject('APP-DB')
+		private readonly db: PostgresJsDatabase<typeof Schema>,
 	) {}
 
 	async insertUser(user: UserDatabase): Promise<UserDatabase> {

@@ -12,9 +12,9 @@ import { UserRepository } from '@user/user.repository';
 @Injectable()
 export class OrganizationService {
 	constructor(
-		private organizationRepository: OrganizationRepository,
-		private userRepository: UserRepository,
-		private idService: IdService,
+		private readonly organizationRepository: OrganizationRepository,
+		private readonly userRepository: UserRepository,
+		private readonly idService: IdService,
 	) {}
 
 	async create(

@@ -16,7 +16,7 @@ declare global {
 @Injectable()
 export class SessionAuthMiddleware implements NestMiddleware {
 	constructor(
-		private sessionManager: SessionManagerService,
+		private readonly sessionManager: SessionManagerService,
 		private logService: LogService,
 	) {}
 

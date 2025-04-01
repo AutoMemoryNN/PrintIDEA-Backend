@@ -15,15 +15,15 @@ export class UserController {
 	}
 
 	@Delete('email/:email')
-	deleteByEmail(
+	async deleteByEmail(
 		@Param('email') email: string,
 		@UserRole() role: string,
 		@UserId() userId: string,
-	): ControllerResponse {
+	): Promise<ControllerResponse> {
 		// TODO: this conversion should be done in a DTO
 		const userRole = role as UserRoles;
 		try {
-			this.userService.deleteUserByEmail(email, userRole, userId);
+			await this.userService.deleteUserByEmail(email, userRole, userId);
 		} catch (error) {
 			throw new Error(`Error deleting user: ${error.message}`);
 		}

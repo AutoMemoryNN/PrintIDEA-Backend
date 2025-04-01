@@ -6,8 +6,8 @@ import { UserService } from '@user/user.service';
 @Injectable()
 export class LoginService {
 	constructor(
-		private sessionManager: SessionManagerService,
-		private userService: UserService,
+		private readonly sessionManager: SessionManagerService,
+		private readonly userService: UserService,
 	) {}
 
 	async googleLogin(
@@ -44,7 +44,7 @@ export class LoginService {
 				this.parseGoogleUserData(googleUser, UserRoles.CLIENT),
 			);
 
-			const jwt = await this.sessionManager.createSession(user);
+			const jwt = this.sessionManager.createSession(user);
 
 			return { isNewUser, jwt };
 		} catch (error) {

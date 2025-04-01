@@ -6,8 +6,8 @@ import { UserRepository } from './user.repository';
 @Injectable()
 export class UserService {
 	constructor(
-		private userRepository: UserRepository,
-		private logService: LogService,
+		private readonly userRepository: UserRepository,
+		private readonly logService: LogService,
 	) {}
 
 	readonly context = 'UserService';

@@ -6,7 +6,7 @@ import { ControllerResponse, OrganizationDatabase } from '@type/index';
 
 @Controller('organizations')
 export class OrganizationController {
-	constructor(private orgService: OrganizationService) {}
+	constructor(private readonly orgService: OrganizationService) {}
 	@Post()
 	async createOrganization(
 		@UserId() userId: string,

@@ -6,8 +6,8 @@ import { SessionManagerService } from '@session/session.service';
 @Controller('login')
 export class LoginController {
 	constructor(
-		private loginService: LoginService,
-		private sessionManager: SessionManagerService,
+		private readonly loginService: LoginService,
+		private readonly sessionManager: SessionManagerService,
 	) {}
 
 	@Get()
