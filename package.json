@@ -15,17 +15,24 @@
 		"start:debug": "nest start --debug --watch",
 		"start:prod": "node dist/main",
 		"test": "vitest run",
-		"test:ui": "vitest --ui --coverage"
+		"test:ui": "vitest --ui --coverage",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate"
 	},
 	"dependencies": {
+		"@knaadh/nestjs-drizzle-postgres": "1.2.0",
 		"@nestjs/common": "10.0.0",
 		"@nestjs/core": "10.0.0",
 		"@nestjs/platform-express": "10.0.0",
 		"dotenv": "16.4.7",
+		"drizzle-orm": "0.41.0",
 		"jose": "6.0.10",
 		"jsonwebtoken": "9.0.2",
+		"nanoid": "3.3.7",
+		"pg": "8.14.1",
 		"reflect-metadata": "0.1.12",
-		"rxjs": "7.8.1"
+		"rxjs": "7.8.1",
+		"uuid": "11.1.0"
 	},
 	"devDependencies": {
 		"@nestjs/cli": "10.0.0",
@@ -37,6 +44,7 @@
 		"@vitest/coverage-v8": "2.1.8",
 		"@vitest/ui": "2.1.8",
 		"biome": "0.3.3",
+		"drizzle-kit": "0.30.5",
 		"source-map-support": "0.5.21",
 		"ts-loader": "9.4.3",
 		"ts-node": "10.9.1",

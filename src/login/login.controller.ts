@@ -1,13 +1,13 @@
-import { AccessToken } from '@auth/auth.decorators';
-import { AuthService } from '@auth/auth.service';
+import { AccessToken } from '@login/login.decorators';
+import { LoginService } from '@login/login.service';
 import { Controller, Delete, Get, Query } from '@nestjs/common';
 import { SessionManagerService } from '@session/session.service';
 
-@Controller('auth')
-export class AuthController {
+@Controller('login')
+export class LoginController {
 	constructor(
-		private authService: AuthService,
-		private sessionManager: SessionManagerService,
+		private readonly loginService: LoginService,
+		private readonly sessionManager: SessionManagerService,
 	) {}
 
 	@Get()
@@ -16,12 +16,12 @@ export class AuthController {
 		@AccessToken() accessToken: string,
 	): Promise<{ isNewUser: boolean; jwt: string }> {
 		if (provider === 'google') {
-			return this.authService.googleLogin(accessToken);
+			return this.loginService.googleLogin(accessToken);
 		}
 		throw new Error('Provider not supported');
 	}
 
-	@Delete('logout')
+	@Delete()
 	async logout(@AccessToken() token: string): Promise<{ message: string }> {
 		// this verification should be done in a middleware layer
 		if (!this.sessionManager.verifySession(token)) {
