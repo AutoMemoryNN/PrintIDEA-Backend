@@ -1,32 +1,19 @@
-import {
-	Body,
-	Controller,
-	Delete,
-	Get,
-	Param,
-	Post,
-	Put,
-} from '@nestjs/common';
-import {
-	AddUserDto,
-	CreateOrgDto,
-	OrgInfo,
-	UpdateOrgDto,
-} from '@org/organization.dto';
-import { Organization, OrganizationService } from '@org/organization.service';
-import { UserId, UserRole } from '@security/security.decorators';
-import { ControllerResponse } from '@type/index';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { AddUserDto, CreateOrgDto, OrgInfo } from '@org/organization.dto';
+import { OrganizationService } from '@org/organization.service';
+import { UserId } from '@security/security.decorators';
+import { ControllerResponse, OrganizationDatabase } from '@type/index';
 
 @Controller('organizations')
 export class OrganizationController {
 	constructor(private orgService: OrganizationService) {}
 	@Post()
-	createOrganization(
+	async createOrganization(
 		@UserId() userId: string,
 		@Body() createOrganizationDto: CreateOrgDto,
-	): ControllerResponse<Organization> {
+	): Promise<ControllerResponse<OrganizationDatabase>> {
 		const { name, description } = createOrganizationDto;
-		const newOrg = this.orgService.create(name, description, userId);
+		const newOrg = await this.orgService.create(name, description, userId);
 		return {
 			message: `Organization created successfully ${newOrg.id}`,
 			data: newOrg,
@@ -38,70 +25,66 @@ export class OrganizationController {
 		@Param('id') id: string,
 		@UserId() userId: string,
 	): ControllerResponse {
-		console.log(`User ID: ${userId} - Deleting Organization with ID ${id}`);
-
+		this.orgService.deleteOrganization(id, userId);
 		return {
 			message: `Organization with ID ${id} deleted successfully`,
 		};
 	}
 
-	@Put(':id')
-	updateOrganization(
-		@Param('id') id: string,
-		@Body() updateOrganizationDto: UpdateOrgDto,
-		@UserId() userId: string,
-	): ControllerResponse {
-		console.log(`User ID: ${userId} - Updating Organization with ID ${id}`);
-		console.log(`${updateOrganizationDto}`);
+	// @Put(':id')
+	// async updateOrganization(
+	// 	@Param('id') id: string,
+	// 	@Body() updateOrganizationDto: UpdateOrgDto,
+	// 	@UserId() userId: string,
+	// ): Promise<ControllerResponse<OrganizationDatabase>> {
 
-		return {
-			message: `Organization with ID ${id} updated successfully`,
-		};
-	}
+	// }
 
 	@Get(':id')
-	getOrganization(
+	async getOrganization(
 		@Param('id') id: string,
-		@UserRole() userRole: string,
-	): ControllerResponse<OrgInfo> {
-		console.log(
-			`User Role: ${userRole} - Retrieving Organization with ID ${id}`,
-		);
-
+		@UserId() userId: string,
+	): Promise<ControllerResponse<OrgInfo>> {
+		const orgInfo = await this.orgService.getOrganizationById(id, userId);
 		return {
-			message: `Organization with ID ${id} retrieved successfully`,
-			data: {
-				id,
-				name: 'Sample Name',
-				description: 'Sample Description',
-			},
+			message: 'Organization retrieved successfully',
+			data: orgInfo,
 		};
 	}
 
 	@Get()
-	getOrganizationsByUserId(
-		@Param('id') id: string,
+	async getOrganizationsByUserId(
 		@UserId() userId: string,
-	): ControllerResponse<OrgInfo[]> {
-		console.log(
-			`User Role: ${userId} - Retrieving Organizations for User with ID ${id}`,
-		);
-		const orgs = this.orgService.getOrgsByUserId(userId);
+	): Promise<ControllerResponse<OrganizationDatabase[]>> {
+		const orgs = await this.orgService.getOrganizationsByUserId(userId);
 		return {
-			message: `Organizations for User with ID ${id} retrieved successfully`,
+			message: 'Organizations retrieved successfully',
 			data: orgs,
 		};
 	}
 
-	@Post('add-user')
-	addUserToOrganization(
+	@Post(':id/add-user')
+	async addUserToOrganization(
+		@Param('id') orgId: string,
 		@Body() addUserDto: AddUserDto,
 		@UserId() userId: string,
-	): ControllerResponse {
+	): Promise<ControllerResponse> {
 		const { mail, role } = addUserDto;
-		this.orgService.addUser(mail, role, userId);
+		await this.orgService.addUser(orgId, mail, role, userId);
 		return {
 			message: `User ${mail} added to organization successfully`,
+		};
+	}
+
+	@Delete(':id/remove-user/:removeUserId')
+	async removeUserFromOrganization(
+		@Param('id') orgId: string,
+		@Param('removeUserId') removeUserId: string,
+		@UserId() userId: string,
+	): Promise<ControllerResponse> {
+		await this.orgService.removeUserFrom(orgId, userId, removeUserId);
+		return {
+			message: 'User removed from organization successfully',
 		};
 	}
 }

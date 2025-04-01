@@ -1,3 +1,5 @@
+import { OrgRoles } from '@database/database.schema';
+
 export type CreateOrgDto = {
 	name: string;
 	description: string;
@@ -21,5 +23,10 @@ export type OrgInfo = {
 
 export type AddUserDto = {
 	mail: string;
-	role: string;
+	role: OrgRoles;
+};
+
+export type UserOrg = {
+	id: string;
+	userId: string;
 };

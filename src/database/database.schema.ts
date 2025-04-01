@@ -17,6 +17,7 @@ export enum UserRoles {
 export enum OrgRoles {
 	ADMIN = 'admin',
 	MEMBER = 'member',
+	LEADER = 'leader',
 }
 
 export enum TaskStatus {
@@ -64,22 +65,12 @@ export const organizations = pgTable('organizations', {
 	name: varchar('name', { length: 100 }).notNull(),
 	description: text('description').notNull(),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
-	leaderId: varchar('leader_id', { length: 36 })
-		.notNull()
-		.references(() => users.id),
 });
 
-export const organizationsRelations = relations(
-	organizations,
-	({ one, many }) => ({
-		leader: one(users, {
-			fields: [organizations.leaderId],
-			references: [users.id],
-		}),
-		userOrganizations: many(userOrganization),
-		projects: many(projects),
-	}),
-);
+export const organizationsRelations = relations(organizations, ({ many }) => ({
+	userOrganizations: many(userOrganization),
+	projects: many(projects),
+}));
 
 export const userOrganization = pgTable(
 	'users_organizations',
@@ -89,7 +80,7 @@ export const userOrganization = pgTable(
 			.references(() => users.id),
 		organizationId: varchar('organization_id', { length: 36 })
 			.notNull()
-			.references(() => organizations.id),
+			.references(() => organizations.id, { onDelete: 'cascade' }),
 		role: orgRoleEnum('role').notNull(),
 	},
 	(table) => [
@@ -120,7 +111,7 @@ export const projects = pgTable('projects', {
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	organizationId: varchar('organization_id', { length: 36 })
 		.notNull()
-		.references(() => organizations.id),
+		.references(() => organizations.id, { onDelete: 'cascade' }),
 });
 
 export const projectsRelations = relations(projects, ({ one, many }) => ({
