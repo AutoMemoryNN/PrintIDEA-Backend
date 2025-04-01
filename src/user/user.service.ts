@@ -1,6 +1,6 @@
 import { LogService } from '@log/log.service';
 import { Injectable } from '@nestjs/common';
-import { UserDatabase, UserRole } from '@type/index';
+import { UserDatabase, UserRoles } from '@type/index';
 import { UserRepository } from './user.repository';
 
 @Injectable()
@@ -39,7 +39,7 @@ export class UserService {
 
 	async deleteUserByEmail(
 		targetEmail: string,
-		role: UserRole,
+		role: UserRoles,
 		userId: string,
 	): Promise<void> {
 		const user = await this.userRepository.getUserByEmail(targetEmail);
@@ -59,16 +59,16 @@ export class UserService {
 	verifyElevatedPermissions(
 		userId: string,
 		userAffected: string,
-		role: UserRole,
+		role: UserRoles,
 	): boolean {
-		if (role !== UserRole.ADMIN && userId !== userAffected) {
+		if (role !== UserRoles.ADMIN && userId !== userAffected) {
 			this.logService.error(
 				`User with id ${userId} tried to operate on user with id ${userAffected} without elevated permissions`,
 				this.context,
 			);
 			return false;
 		}
-		if (role === UserRole.ADMIN) {
+		if (role === UserRoles.ADMIN) {
 			return true;
 		}
 		if (userId === userAffected) {
