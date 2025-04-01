@@ -15,6 +15,13 @@
       "when": 1743426183597,
       "tag": "0001_kind_radioactive_man",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1743478931782,
+      "tag": "0002_crazy_blazing_skull",
+      "breakpoints": true
     }
   ]
 }
