@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1743387552867,
-      "tag": "0000_certain_sunspot",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1743426183597,
-      "tag": "0001_kind_radioactive_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1743478931782,
-      "tag": "0002_crazy_blazing_skull",
+      "when": 1743698936178,
+      "tag": "0000_fantastic_jigsaw",
       "breakpoints": true
     }
   ]
