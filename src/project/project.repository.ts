@@ -74,8 +74,6 @@ export class ProjectRepository {
 				) RETURNING *`,
 			);
 
-			console.log('Project created:', result[0]);
-
 			return result[0] as ProjectDatabase;
 		} catch (error) {
 			throw new Error(`Error creating project: ${error.message}`);

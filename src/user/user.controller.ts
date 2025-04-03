@@ -6,7 +6,7 @@ import { UserService } from './user.service';
 
 @Controller('users')
 export class UserController {
-	constructor(private userService: UserService) {}
+	constructor(private readonly userService: UserService) {}
 
 	//get a user by id
 	@Get(':id')
