@@ -1,6 +1,12 @@
 import { AccessToken } from '@login/login.decorators';
 import { LoginService } from '@login/login.service';
-import { Controller, Delete, Get, Query } from '@nestjs/common';
+import {
+	BadRequestException,
+	Controller,
+	Delete,
+	Get,
+	Query,
+} from '@nestjs/common';
 import { SessionManagerService } from '@session/session.service';
 
 @Controller('login')
@@ -18,7 +24,10 @@ export class LoginController {
 		if (provider === 'google') {
 			return this.loginService.googleLogin(accessToken);
 		}
-		throw new Error('Provider not supported');
+		if (provider === 'microsoft') {
+			return this.loginService.microsoftLogin(accessToken);
+		}
+		throw new BadRequestException('Provider not supported');
 	}
 
 	@Delete()
