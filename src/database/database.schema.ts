@@ -40,11 +40,14 @@ function enumToPgEnum<T extends Record<string, string>>(
 	return Object.values(tsEnum) as [T[keyof T], ...T[keyof T][]];
 }
 
-export const userRoleEnum = pgEnum('user_role', enumToPgEnum(UserRoles));
-export const orgRoleEnum = pgEnum('org_role', enumToPgEnum(OrgRoles));
-export const taskStatusEnum = pgEnum('task_status', enumToPgEnum(TaskStatus));
-export const taskPriorityEnum = pgEnum(
-	'task_priority',
+export const userRoleEnum = pgEnum('user_roles_enum', enumToPgEnum(UserRoles));
+export const orgRoleEnum = pgEnum('org_roles_enum', enumToPgEnum(OrgRoles));
+export const taskStatusEnum = pgEnum(
+	'task_status_enum',
+	enumToPgEnum(TaskStatus),
+);
+export const taskPrioritiesEnum = pgEnum(
+	'task_priorities',
 	enumToPgEnum(TaskPriorities),
 );
 
@@ -108,10 +111,17 @@ export const projects = pgTable('projects', {
 	id: varchar('id', { length: 36 }).primaryKey(),
 	name: varchar('name', { length: 100 }).notNull(),
 	description: text('description').notNull(),
-	createdAt: timestamp('created_at').defaultNow().notNull(),
+	status: taskStatusEnum('status').default(TaskStatus.PENDING).notNull(),
+	startDate: timestamp('start_date'),
+	endDate: timestamp('end_date'),
+	priority: taskPrioritiesEnum('priority')
+
+		.default(TaskPriorities.LOW)
+		.notNull(),
 	organizationId: varchar('organization_id', { length: 36 })
-		.notNull()
-		.references(() => organizations.id, { onDelete: 'cascade' }),
+
+		.references(() => organizations.id, { onDelete: 'cascade' })
+		.notNull(),
 });
 
 export const projectsRelations = relations(projects, ({ one, many }) => ({
@@ -127,7 +137,7 @@ export const tasks = pgTable('tasks', {
 	title: varchar('title', { length: 100 }).notNull(),
 	description: text('description').notNull(),
 	tag: varchar('tag', { length: 50 }),
-	priority: taskPriorityEnum('priority'),
+	priority: taskPrioritiesEnum('priority'),
 	initDate: timestamp('init_date').notNull(),
 	endDate: timestamp('end_date').notNull(),
 	status: taskStatusEnum('status').notNull(),
@@ -137,7 +147,7 @@ export const tasks = pgTable('tasks', {
 		.references(() => projects.id),
 });
 
-const tasksRelations = relations(tasks, ({ one }) => ({
+export const tasksRelations = relations(tasks, ({ one }) => ({
 	project: one(projects, {
 		fields: [tasks.projectId],
 		references: [projects.id],

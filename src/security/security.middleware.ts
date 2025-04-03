@@ -17,7 +17,7 @@ declare global {
 export class SessionAuthMiddleware implements NestMiddleware {
 	constructor(
 		private readonly sessionManager: SessionManagerService,
-		private logService: LogService,
+		private readonly logService: LogService,
 	) {}
 
 	readonly context = 'SessionAuthMiddleware';

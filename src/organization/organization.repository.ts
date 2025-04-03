@@ -11,7 +11,8 @@ import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 @Injectable()
 export class OrganizationRepository {
 	constructor(
-		@Inject('APP-DB') private db: PostgresJsDatabase<typeof Schema>,
+		@Inject('APP-DB')
+		private readonly db: PostgresJsDatabase<typeof Schema>,
 	) {}
 
 	async getOrganizationById(id: string): Promise<OrganizationDatabase> {

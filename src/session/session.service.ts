@@ -17,8 +17,8 @@ import { MemorySessionManager } from './session.repository';
 @Injectable()
 export class SessionManagerService {
 	constructor(
-		private memorySession: MemorySessionManager,
-		private logService: LogService,
+		private readonly memorySession: MemorySessionManager,
+		private readonly logService: LogService,
 	) {}
 
 	readonly context = 'SessionManagerService';

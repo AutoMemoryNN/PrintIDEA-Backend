@@ -7,7 +7,7 @@ export class MemorySessionManager {
 
 	readonly context = 'MemorySessionManager';
 
-	constructor(private logService: LogService) {
+	constructor(private readonly logService: LogService) {
 		this.sessions = new Map();
 	}
 

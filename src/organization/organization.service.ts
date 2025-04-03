@@ -132,7 +132,7 @@ export class OrganizationService {
 		);
 	}
 
-	private async getUserRoleInOrganization(
+	async getUserRoleInOrganization(
 		orgId: string,
 		userId: string,
 	): Promise<OrgRoles> {

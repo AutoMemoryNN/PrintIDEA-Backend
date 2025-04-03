@@ -26,7 +26,8 @@
 			"@user/*": ["src/user/*"],
 			"@log/*": ["src/log/*"],
 			"@security/*": ["src/security/*"],
-			"@org/*": ["src/organization/*"]
+			"@org/*": ["src/organization/*"],
+			"@projects/*": ["src/project/*"]
 		}
 	},
 	"include": ["src/**/*.ts"],
