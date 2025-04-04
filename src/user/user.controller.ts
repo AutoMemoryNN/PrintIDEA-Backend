@@ -1,9 +1,11 @@
 import { UserRoles } from '@database/database.schema';
 import { Controller, Delete, Get, Param } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserId, UserRole } from '@security/security.decorators';
 import { ControllerResponse } from '@type/index';
 import { UserService } from './user.service';
 
+@ApiTags('users')
 @Controller('users')
 export class UserController {
 	constructor(private readonly userService: UserService) {}
@@ -14,6 +16,10 @@ export class UserController {
 		return `User with id: ${id}`;
 	}
 
+	@ApiTags('delete-user')
+	@ApiOperation({
+		summary: 'Delete a user by email',
+	})
 	@Delete('email/:email')
 	async deleteByEmail(
 		@Param('email') email: string,

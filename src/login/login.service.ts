@@ -1,5 +1,5 @@
 import { LogService } from '@log/log.service';
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { SessionManagerService } from '@session/session.service';
 import { UserDatabase, UserRoles } from '@type/index';
 import { UserService } from '@user/user.service';
@@ -21,8 +21,8 @@ export class LoginService {
 		accessToken: string,
 	): Promise<{ isNewUser: boolean; jwt: string }> {
 		if (!accessToken) {
-			this.logger.fatal('Google login attempt without access token');
-			throw new Error('No access token provided');
+			this.logger.error('Google login attempt without access token');
+			throw new BadRequestException('No access token provided');
 		}
 
 		try {
@@ -78,8 +78,8 @@ export class LoginService {
 		accessToken: string,
 	): Promise<{ isNewUser: boolean; jwt: string }> {
 		if (!accessToken) {
-			this.logger.fatal('Microsoft login attempt without access token');
-			throw new Error('No access token provided');
+			this.logger.error('Microsoft login attempt without access token');
+			throw new BadRequestException('No access token provided');
 		}
 
 		try {

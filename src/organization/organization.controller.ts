@@ -1,13 +1,20 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AddUserDto, CreateOrgDto, OrgInfo } from '@org/organization.dto';
 import { OrganizationService } from '@org/organization.service';
 import { UserId } from '@security/security.decorators';
 import { ControllerResponse, OrganizationDatabase } from '@type/index';
 
+@ApiTags('organizations')
 @Controller('organizations')
 export class OrganizationController {
 	constructor(private readonly orgService: OrganizationService) {}
+
 	@Post()
+	@ApiTags('create-organization')
+	@ApiOperation({
+		summary: 'Create a new organization',
+	})
 	async createOrganization(
 		@UserId() userId: string,
 		@Body() createOrganizationDto: CreateOrgDto,
@@ -21,6 +28,10 @@ export class OrganizationController {
 	}
 
 	@Delete(':id')
+	@ApiTags('delete-organization')
+	@ApiOperation({
+		summary: 'Delete an organization',
+	})
 	deleteOrganization(
 		@Param('id') id: string,
 		@UserId() userId: string,
@@ -41,6 +52,10 @@ export class OrganizationController {
 	// }
 
 	@Get(':id')
+	@ApiTags('get-organization')
+	@ApiOperation({
+		summary: 'Get organization by ID',
+	})
 	async getOrganization(
 		@Param('id') id: string,
 		@UserId() userId: string,
@@ -53,6 +68,10 @@ export class OrganizationController {
 	}
 
 	@Get()
+	@ApiTags('get-organizations')
+	@ApiOperation({
+		summary: 'Get all organizations',
+	})
 	async getOrganizationsByUserId(
 		@UserId() userId: string,
 	): Promise<ControllerResponse<OrganizationDatabase[]>> {
@@ -63,6 +82,11 @@ export class OrganizationController {
 		};
 	}
 
+	@Get(':id/users')
+	@ApiTags('get-users')
+	@ApiOperation({
+		summary: 'Get users in an organization',
+	})
 	@Post(':id/add-user')
 	async addUserToOrganization(
 		@Param('id') orgId: string,
@@ -76,6 +100,11 @@ export class OrganizationController {
 		};
 	}
 
+	@Get(':id/users/:userId')
+	@ApiTags('get-user')
+	@ApiOperation({
+		summary: 'Get user by ID in an organization',
+	})
 	@Delete(':id/remove-user/:removeUserId')
 	async removeUserFromOrganization(
 		@Param('id') orgId: string,

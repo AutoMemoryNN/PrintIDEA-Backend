@@ -7,8 +7,10 @@ import {
 	Get,
 	Query,
 } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { SessionManagerService } from '@session/session.service';
 
+@ApiTags('login')
 @Controller('login')
 export class LoginController {
 	constructor(
@@ -17,6 +19,9 @@ export class LoginController {
 	) {}
 
 	@Get()
+	@ApiOperation({
+		summary: 'Login with Google or Microsoft',
+	})
 	login(
 		@Query('provider') provider,
 		@AccessToken() accessToken: string,
@@ -30,11 +35,16 @@ export class LoginController {
 		throw new BadRequestException('Provider not supported');
 	}
 
+	@ApiOperation({
+		summary: 'Logout from the application',
+	})
 	@Delete()
 	async logout(@AccessToken() token: string): Promise<{ message: string }> {
 		// this verification should be done in a middleware layer
 		if (!this.sessionManager.verifySession(token)) {
-			throw new Error('Invalid session');
+			throw new BadRequestException(
+				'Invalid token. Please log in again.',
+			);
 		}
 		await this.sessionManager.removeSession(token);
 		return { message: 'Session removed successfully' };

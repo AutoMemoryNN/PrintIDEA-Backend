@@ -7,16 +7,24 @@ import {
 	Post,
 	Put,
 } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ProjectService } from '@projects/project.service';
 import { UserId } from '@security/security.decorators';
 import { ControllerResponse, ProjectDatabase } from '@type/index';
 import { CreateProjectDto, UpdateProjectDto } from './project.dto';
 
+@ApiTags('projects')
 @Controller('projects')
 export class ProjectController {
 	constructor(private readonly projectService: ProjectService) {}
 
 	@Get(':org')
+	@ApiOperation({
+		summary: 'Get projects by organization ID',
+	})
+	@ApiOperation({
+		summary: 'Get projects by organization ID',
+	})
 	async getMyProjects(
 		@Param('org') organizationId: string,
 		@UserId() userId: string,
@@ -32,6 +40,9 @@ export class ProjectController {
 	}
 
 	@Post(':org')
+	@ApiOperation({
+		summary: 'Create a new project',
+	})
 	async createProject(
 		@Param('org') organizationId: string,
 		@UserId() userId: string,
@@ -49,6 +60,9 @@ export class ProjectController {
 	}
 
 	@Delete(':org/:id')
+	@ApiOperation({
+		summary: 'Delete a project',
+	})
 	async deleteProject(
 		@Param('org') organizationId: string,
 		@Param('id') id: string,
@@ -61,6 +75,9 @@ export class ProjectController {
 	}
 
 	@Put(':org/:id')
+	@ApiOperation({
+		summary: 'Update a project',
+	})
 	async updateProject(
 		@Param('org') organizationId: string,
 		@Param('id') id: string,
