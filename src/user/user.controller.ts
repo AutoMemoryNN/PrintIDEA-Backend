@@ -16,7 +16,6 @@ export class UserController {
 		return `User with id: ${id}`;
 	}
 
-	@ApiTags('delete-user')
 	@ApiOperation({
 		summary: 'Delete a user by email',
 	})

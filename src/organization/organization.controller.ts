@@ -11,7 +11,6 @@ export class OrganizationController {
 	constructor(private readonly orgService: OrganizationService) {}
 
 	@Post()
-	@ApiTags('create-organization')
 	@ApiOperation({
 		summary: 'Create a new organization',
 	})
@@ -28,7 +27,6 @@ export class OrganizationController {
 	}
 
 	@Delete(':id')
-	@ApiTags('delete-organization')
 	@ApiOperation({
 		summary: 'Delete an organization',
 	})
@@ -52,7 +50,6 @@ export class OrganizationController {
 	// }
 
 	@Get(':id')
-	@ApiTags('get-organization')
 	@ApiOperation({
 		summary: 'Get organization by ID',
 	})
@@ -68,7 +65,6 @@ export class OrganizationController {
 	}
 
 	@Get()
-	@ApiTags('get-organizations')
 	@ApiOperation({
 		summary: 'Get all organizations',
 	})
@@ -83,7 +79,6 @@ export class OrganizationController {
 	}
 
 	@Get(':id/users')
-	@ApiTags('get-users')
 	@ApiOperation({
 		summary: 'Get users in an organization',
 	})
@@ -101,7 +96,6 @@ export class OrganizationController {
 	}
 
 	@Get(':id/users/:userId')
-	@ApiTags('get-user')
 	@ApiOperation({
 		summary: 'Get user by ID in an organization',
 	})

@@ -27,7 +27,8 @@
 			"@log/*": ["src/log/*"],
 			"@security/*": ["src/security/*"],
 			"@org/*": ["src/organization/*"],
-			"@projects/*": ["src/project/*"]
+			"@projects/*": ["src/project/*"],
+			"@board/*": ["src/board/*"]
 		}
 	},
 	"include": ["src/**/*.ts"],

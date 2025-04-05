@@ -115,13 +115,14 @@ export const projects = pgTable('projects', {
 	startDate: timestamp('start_date'),
 	endDate: timestamp('end_date'),
 	priority: taskPrioritiesEnum('priority')
-
 		.default(TaskPriorities.LOW)
 		.notNull(),
 	organizationId: varchar('organization_id', { length: 36 })
-
 		.references(() => organizations.id, { onDelete: 'cascade' })
 		.notNull(),
+	boardId: varchar('board_id', { length: 36 })
+		.unique()
+		.references(() => boards.id, { onDelete: 'cascade' }),
 });
 
 export const projectsRelations = relations(projects, ({ one, many }) => ({
@@ -130,6 +131,10 @@ export const projectsRelations = relations(projects, ({ one, many }) => ({
 		references: [organizations.id],
 	}),
 	tasks: many(tasks),
+	board: one(boards, {
+		fields: [projects.boardId],
+		references: [boards.id],
+	}),
 }));
 
 export const tasks = pgTable('tasks', {
@@ -154,6 +159,18 @@ export const tasksRelations = relations(tasks, ({ one }) => ({
 	}),
 }));
 
+export const boards = pgTable('boards', {
+	id: varchar('id', { length: 36 }).primaryKey(),
+	data: text('data').notNull(),
+});
+
+export const boardsRelations = relations(boards, ({ one }) => ({
+	project: one(projects, {
+		fields: [boards.id],
+		references: [projects.boardId],
+	}),
+}));
+
 export const Schema = {
 	users,
 	usersRelations,
@@ -165,4 +182,6 @@ export const Schema = {
 	projectsRelations,
 	tasks,
 	tasksRelations,
+	boards,
+	boardsRelations,
 } as const;

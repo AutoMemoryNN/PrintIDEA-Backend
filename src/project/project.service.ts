@@ -1,3 +1,4 @@
+import { BoardService } from '@board/board.service';
 import { LogService } from '@log/log.service';
 import {
 	ForbiddenException,
@@ -13,12 +14,13 @@ import { OrgRoles, ProjectDatabase } from '@type/index';
 
 @Injectable()
 export class ProjectService {
-	private readonly logger = new LogService(ProjectService.name);
+	private readonly logger = new LogService(ProjectService.name); // use LogService for logging
 
 	constructor(
 		private readonly projectRepository: ProjectRepository,
 		private readonly organizationService: OrganizationService,
 		private readonly idService: IdService,
+		private readonly boardService: BoardService,
 	) {}
 
 	async getProjectsByOrgId(
@@ -89,6 +91,7 @@ export class ProjectService {
 				...projectData,
 				organizationId,
 				id,
+				boardId: await this.boardService.createBoard(),
 			} as ProjectDatabase;
 
 			const userOrg =

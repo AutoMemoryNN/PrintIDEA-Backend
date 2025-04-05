@@ -23,6 +23,7 @@ export class ProjectRepository {
 				endDate: projects.endDate,
 				priority: projects.priority,
 				organizationId: projects.organizationId,
+				boardId: projects.boardId,
 			})
 			.from(projects)
 			.where(eq(projects.id, id))
@@ -44,6 +45,7 @@ export class ProjectRepository {
 				endDate: projects.endDate,
 				priority: projects.priority,
 				organizationId: projects.organizationId,
+				boardId: projects.boardId,
 			})
 			.from(projects)
 			.where(eq(projects.organizationId, organizationId));
@@ -61,7 +63,8 @@ export class ProjectRepository {
 					status, 
 					start_date, 
 					end_date, 
-					priority
+					priority,
+					board_id
 				) VALUES (
 					${project.id || null}, 
 					${project.name || null}, 
@@ -70,7 +73,8 @@ export class ProjectRepository {
 					${project.status || TaskStatus.PENDING}, 
 					${project.startDate || null}, 
 					${project.endDate || null}, 
-					${project.priority || TaskPriorities.LOW}
+					${project.priority || TaskPriorities.LOW},
+					${project.boardId || null}
 				) RETURNING *`,
 			);
 

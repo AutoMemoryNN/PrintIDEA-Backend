@@ -43,6 +43,8 @@ export type ProjectDatabase = typeof Schema.projects.$inferSelect;
 
 export type TaskDatabase = typeof Schema.tasks.$inferSelect;
 
+export type BoardDatabase = typeof Schema.boards.$inferSelect;
+
 export type MainDatabase = PostgresJsDatabase<typeof Schema>;
 
 export { UserRoles, OrgRoles, TaskStatus, TaskPriorities };

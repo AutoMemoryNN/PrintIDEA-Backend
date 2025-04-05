@@ -1,3 +1,4 @@
+import { BoardModule } from '@board/board.module';
 import { DatabaseModule } from '@database/database.module';
 import { LogModule } from '@log/log.module';
 import { LoginModule } from '@login/login.module';
@@ -16,6 +17,7 @@ import { SecurityModule } from 'src/security/security.module';
 		OrganizationModule,
 		DatabaseModule,
 		ProjectModule,
+		BoardModule,
 	],
 })
 export class AppModule {}
