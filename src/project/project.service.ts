@@ -84,7 +84,7 @@ export class ProjectService {
 				...projectData,
 				organizationId,
 				id,
-				boardId: await this.boardService.createBoard(),
+				// boardId: await this.boardService.createBoard(),
 			} as ProjectDatabase;
 
 			const userOrg =

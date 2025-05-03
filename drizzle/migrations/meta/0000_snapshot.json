@@ -1,9 +1,46 @@
 {
-  "id": "ba57684f-cef8-4c8b-9392-17a5e8ce3fa6",
+  "id": "d17e9949-f7dd-43de-823e-53c39f65caac",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "public.boards": {
+      "name": "boards",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(36)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "width": {
+          "name": "width",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "height": {
+          "name": "height",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "base_version": {
+          "name": "base_version",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.organizations": {
       "name": "organizations",
       "schema": "",
@@ -97,6 +134,12 @@
           "type": "varchar(36)",
           "primaryKey": false,
           "notNull": true
+        },
+        "board_id": {
+          "name": "board_id",
+          "type": "varchar(36)",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
@@ -113,12 +156,122 @@
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
+        },
+        "projects_board_id_boards_id_fk": {
+          "name": "projects_board_id_boards_id_fk",
+          "tableFrom": "projects",
+          "tableTo": "boards",
+          "columnsFrom": [
+            "board_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "projects_board_id_unique": {
+          "name": "projects_board_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "board_id"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.shapes": {
+      "name": "shapes",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(128)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "board_id": {
+          "name": "board_id",
+          "type": "varchar(36)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "shapes_types_enum",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fill_color": {
+          "name": "fill_color",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "stroke_color": {
+          "name": "stroke_color",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "stroke_width": {
+          "name": "stroke_width",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "draggable": {
+          "name": "draggable",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "shape_data": {
+          "name": "shape_data",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "idx_shapes_board_type": {
+          "name": "idx_shapes_board_type",
+          "columns": [
+            {
+              "expression": "board_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "type",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {
+        "chk_shape_data": {
+          "name": "chk_shape_data",
+          "value": "(\n\t\t(type = 'rectangle' AND shape_data ?& array['x','y','width','height'])\n\t OR (type = 'circle'    AND shape_data ?& array['x','y','radius'])\n\t OR (type IN ('line','arrow','scribble') AND shape_data ? 'points')\n\t OR (type = 'text'      AND shape_data ?& array['x','y','text','fontSize','width','padding'])\n\t OR (type = 'note'      AND shape_data ?& array['x','y','width','height','padding','text'])\n\t  )"
+        }
+      },
       "isRLSEnabled": false
     },
     "public.tasks": {
@@ -370,6 +523,19 @@
         "admin",
         "member",
         "leader"
+      ]
+    },
+    "public.shapes_types_enum": {
+      "name": "shapes_types_enum",
+      "schema": "public",
+      "values": [
+        "rectangle",
+        "circle",
+        "line",
+        "arrow",
+        "scribble",
+        "text",
+        "note"
       ]
     },
     "public.task_priorities": {

@@ -1,7 +1,15 @@
 CREATE TYPE "public"."org_roles_enum" AS ENUM('admin', 'member', 'leader');--> statement-breakpoint
+CREATE TYPE "public"."shapes_types_enum" AS ENUM('rectangle', 'circle', 'line', 'arrow', 'scribble', 'text', 'note');--> statement-breakpoint
 CREATE TYPE "public"."task_priorities" AS ENUM('low', 'medium', 'high', 'urgent');--> statement-breakpoint
 CREATE TYPE "public"."task_status_enum" AS ENUM('pending', 'in_progress', 'completed', 'cancelled');--> statement-breakpoint
 CREATE TYPE "public"."user_roles_enum" AS ENUM('admin', 'client');--> statement-breakpoint
+CREATE TABLE "boards" (
+	"id" varchar(36) PRIMARY KEY NOT NULL,
+	"width" numeric NOT NULL,
+	"height" numeric NOT NULL,
+	"base_version" bigint NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "organizations" (
 	"id" varchar(36) PRIMARY KEY NOT NULL,
 	"name" varchar(100) NOT NULL,
@@ -17,7 +25,27 @@ CREATE TABLE "projects" (
 	"start_date" timestamp,
 	"end_date" timestamp,
 	"priority" "task_priorities" DEFAULT 'low' NOT NULL,
-	"organization_id" varchar(36) NOT NULL
+	"organization_id" varchar(36) NOT NULL,
+	"board_id" varchar(36),
+	CONSTRAINT "projects_board_id_unique" UNIQUE("board_id")
+);
+--> statement-breakpoint
+CREATE TABLE "shapes" (
+	"id" varchar(128) PRIMARY KEY NOT NULL,
+	"board_id" varchar(36) NOT NULL,
+	"type" "shapes_types_enum" NOT NULL,
+	"fill_color" text NOT NULL,
+	"stroke_color" text NOT NULL,
+	"stroke_width" numeric NOT NULL,
+	"draggable" boolean NOT NULL,
+	"shape_data" jsonb NOT NULL,
+	CONSTRAINT "chk_shape_data" CHECK ((
+		(type = 'rectangle' AND shape_data ?& array['x','y','width','height'])
+	 OR (type = 'circle'    AND shape_data ?& array['x','y','radius'])
+	 OR (type IN ('line','arrow','scribble') AND shape_data ? 'points')
+	 OR (type = 'text'      AND shape_data ?& array['x','y','text','fontSize','width','padding'])
+	 OR (type = 'note'      AND shape_data ?& array['x','y','width','height','padding','text'])
+	  ))
 );
 --> statement-breakpoint
 CREATE TABLE "tasks" (
@@ -50,8 +78,10 @@ CREATE TABLE "users" (
 );
 --> statement-breakpoint
 ALTER TABLE "projects" ADD CONSTRAINT "projects_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "projects" ADD CONSTRAINT "projects_board_id_boards_id_fk" FOREIGN KEY ("board_id") REFERENCES "public"."boards"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "tasks" ADD CONSTRAINT "tasks_project_id_projects_id_fk" FOREIGN KEY ("project_id") REFERENCES "public"."projects"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "users_organizations" ADD CONSTRAINT "users_organizations_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "users_organizations" ADD CONSTRAINT "users_organizations_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "idx_shapes_board_type" ON "shapes" USING btree ("board_id","type");--> statement-breakpoint
 CREATE INDEX "idx_user_organization_user" ON "users_organizations" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "idx_user_organization_org" ON "users_organizations" USING btree ("organization_id");

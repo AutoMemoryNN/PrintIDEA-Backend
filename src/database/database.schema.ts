@@ -1,5 +1,10 @@
 import {
+	bigint,
+	boolean,
+	check,
 	index,
+	jsonb,
+	numeric,
 	pgEnum,
 	pgTable,
 	primaryKey,
@@ -8,7 +13,7 @@ import {
 	varchar,
 } from 'drizzle-orm/pg-core';
 
-import { relations } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 
 export enum UserRoles {
 	ADMIN = 'admin',
@@ -34,6 +39,16 @@ export enum TaskPriorities {
 	URGENT = 'urgent',
 }
 
+export enum ShapesTypes {
+	RECTANGLE = 'rectangle',
+	CIRCLE = 'circle',
+	LINE = 'line',
+	ARROW = 'arrow',
+	SCRIBBLE = 'scribble',
+	TEXT = 'text',
+	NOTE = 'note',
+}
+
 function enumToPgEnum<T extends Record<string, string>>(
 	tsEnum: T,
 ): [T[keyof T], ...T[keyof T][]] {
@@ -49,6 +64,10 @@ export const taskStatusEnum = pgEnum(
 export const taskPrioritiesEnum = pgEnum(
 	'task_priorities',
 	enumToPgEnum(TaskPriorities),
+);
+export const shapesTypesEnum = pgEnum(
+	'shapes_types_enum',
+	enumToPgEnum(ShapesTypes),
 );
 
 export const users = pgTable('users', {
@@ -161,13 +180,49 @@ export const tasksRelations = relations(tasks, ({ one }) => ({
 
 export const boards = pgTable('boards', {
 	id: varchar('id', { length: 36 }).primaryKey(),
-	data: text('data').notNull(),
+	width: numeric('width').notNull(),
+	height: numeric('height').notNull(),
+	baseVersion: bigint('base_version', { mode: 'number' }).notNull(),
 });
 
 export const boardsRelations = relations(boards, ({ one }) => ({
 	project: one(projects, {
 		fields: [boards.id],
 		references: [projects.boardId],
+	}),
+}));
+
+export const shapes = pgTable(
+	'shapes',
+	{
+		id: varchar('id', { length: 128 }).primaryKey(),
+		boardId: varchar('board_id', { length: 36 }).notNull(),
+		type: shapesTypesEnum('type').notNull(),
+		fillColor: text('fill_color').notNull(),
+		strokeColor: text('stroke_color').notNull(),
+		strokeWidth: numeric('stroke_width').notNull(),
+		draggable: boolean('draggable').notNull(),
+		shapeData: jsonb('shape_data').notNull(),
+	},
+	(table) => [
+		check(
+			'chk_shape_data',
+			sql`(
+		(type = 'rectangle' AND shape_data ?& array['x','y','width','height'])
+	 OR (type = 'circle'    AND shape_data ?& array['x','y','radius'])
+	 OR (type IN ('line','arrow','scribble') AND shape_data ? 'points')
+	 OR (type = 'text'      AND shape_data ?& array['x','y','text','fontSize','width','padding'])
+	 OR (type = 'note'      AND shape_data ?& array['x','y','width','height','padding','text'])
+	  )`,
+		),
+		index('idx_shapes_board_type').on(table.boardId, table.type),
+	],
+);
+
+export const shapesRelations = relations(shapes, ({ one }) => ({
+	board: one(boards, {
+		fields: [shapes.boardId],
+		references: [boards.id],
 	}),
 }));
 
