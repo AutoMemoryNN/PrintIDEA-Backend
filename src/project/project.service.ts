@@ -60,16 +60,9 @@ export class ProjectService {
 			);
 			return projects;
 		} catch (error) {
-			if (error instanceof ForbiddenException) {
-				throw error;
-			}
-
 			this.logger.error(
 				`Failed to fetch projects for organization ${organizationId}: ${error.message}`,
 				error.stack,
-			);
-			throw new InternalServerErrorException(
-				`Error retrieving projects: ${error.message}`,
 			);
 		}
 	}

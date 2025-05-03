@@ -156,19 +156,9 @@ export class OrganizationService {
 			await this.organizationRepository.deleteOrganization(id);
 			this.logger.log(`Successfully deleted organization ${id}`);
 		} catch (error) {
-			if (
-				error instanceof ForbiddenException ||
-				error instanceof NotFoundException
-			) {
-				throw error;
-			}
-
 			this.logger.error(
 				`Failed to delete organization ${id}: ${error.message}`,
 				error.stack,
-			);
-			throw new InternalServerErrorException(
-				`Error deleting organization: ${error.message}`,
 			);
 		}
 	}

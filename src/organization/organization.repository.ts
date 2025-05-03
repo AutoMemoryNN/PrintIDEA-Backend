@@ -33,14 +33,17 @@ export class OrganizationRepository {
 	async getOrganizationsByUserId(
 		userId: string,
 	): Promise<OrganizationDatabase[]> {
-		console.log('getOrganizationsByUserId', userId);
-
 		const organizations = Schema.organizations;
 		const userOrganization = Schema.userOrganization;
+
 		const orgIds = await this.db
 			.select({ organizationId: userOrganization.organizationId })
 			.from(userOrganization)
 			.where(eq(userOrganization.userId, userId));
+
+		if (orgIds.length === 0) {
+			return [];
+		}
 
 		const result = await this.db
 			.select({
