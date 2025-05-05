@@ -1,6 +1,7 @@
 import {
 	OrgRoles,
 	Schema,
+	ShapesTypes,
 	TaskPriorities,
 	TaskStatus,
 	UserRoles,
@@ -45,6 +46,8 @@ export type TaskDatabase = typeof Schema.tasks.$inferSelect;
 
 export type BoardDatabase = typeof Schema.boards.$inferSelect;
 
+export type ShapesDatabase = typeof Schema.shapes.$inferSelect;
+
 export type MainDatabase = PostgresJsDatabase<typeof Schema>;
 
-export { UserRoles, OrgRoles, TaskStatus, TaskPriorities };
+export { UserRoles, OrgRoles, TaskStatus, TaskPriorities, ShapesTypes };

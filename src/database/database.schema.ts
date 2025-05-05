@@ -180,8 +180,8 @@ export const tasksRelations = relations(tasks, ({ one }) => ({
 
 export const boards = pgTable('boards', {
 	id: varchar('id', { length: 36 }).primaryKey(),
-	width: numeric('width').notNull(),
-	height: numeric('height').notNull(),
+	width: numeric('width', { mode: 'number' }).notNull(),
+	height: numeric('height', { mode: 'number' }).notNull(),
 	baseVersion: bigint('base_version', { mode: 'number' }).notNull(),
 });
 
@@ -239,4 +239,5 @@ export const Schema = {
 	tasksRelations,
 	boards,
 	boardsRelations,
+	shapes,
 } as const;
