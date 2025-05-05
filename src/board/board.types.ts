@@ -30,7 +30,8 @@ export interface NoteData {
 	width: number;
 	height: number;
 	padding: number;
-	text: TextData;
+	text: string;
+	fontSize: number;
 }
 
 export interface ShapeDataMap {
@@ -41,4 +42,15 @@ export interface ShapeDataMap {
 	scribble: LineData;
 	text: TextData;
 	note: NoteData;
+}
+
+export class Shape<T extends keyof ShapeDataMap = keyof ShapeDataMap> {
+	id: string;
+	type: T;
+	fillColor: string;
+	strokeColor: string;
+	strokeWidth: number;
+	draggable: boolean;
+
+	shapeData: ShapeDataMap[T];
 }

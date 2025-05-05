@@ -3,7 +3,7 @@ import { ShapeDataMap } from '@board/board.types';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { IdService } from '@security/uuid.security';
 import { BoardDatabase } from '@type/index';
-import { BoardStateDto } from './dto/board.dto';
+import { BoardStateDto, ShapeDto } from './dto/board.dto';
 
 @Injectable()
 export class BoardService {
@@ -34,15 +34,17 @@ export class BoardService {
 		);
 
 		const shapesSelected = shapes
-			? shapes.map((s) => ({
-					id: s.id,
-					type: s.type,
-					fillColor: s.fillColor,
-					strokeColor: s.strokeColor,
-					strokeWidth: Number(s.strokeWidth),
-					draggable: s.draggable,
-					shapeData: s.shapeData as ShapeDataMap[typeof s.type],
-				}))
+			? shapes.map((s) => {
+					return {
+						id: s.id,
+						type: s.type,
+						fillColor: s.fillColor,
+						strokeColor: s.strokeColor,
+						strokeWidth: Number(s.strokeWidth),
+						draggable: s.draggable,
+						...(s.shapeData as ShapeDataMap[typeof s.type]),
+					} as ShapeDto;
+				})
 			: [];
 
 		return {

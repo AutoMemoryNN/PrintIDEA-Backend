@@ -7,3 +7,5 @@ export class BoardStateDto {
 	baseVersion: number;
 	shapes: ShapeDto[];
 }
+
+export { ShapeDto };
