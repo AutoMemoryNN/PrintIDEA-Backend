@@ -7,7 +7,7 @@ import {
 	NotFoundException,
 } from '@nestjs/common';
 import { IdService } from '@security/uuid.security';
-import { BoardDatabase, ShapesDatabase } from '@type/index';
+import { BoardDatabase, ShapesDatabase, ShapesTypes } from '@type/index';
 
 @Injectable()
 export class BoardService {
@@ -191,5 +191,28 @@ export class BoardService {
 		};
 
 		return domain;
+	}
+
+	/**
+	 * Transforms a domain Shape<T> into a ShapesDatabase record.
+	 * Performs minimal conversion since domain is already validated.
+	 */
+	toDatabase<T extends keyof ShapeDataMap>(
+		boardId: string,
+		shape: Shape<T>,
+	): ShapesDatabase {
+		if (!shape.id) {
+			throw new BadRequestException('Shape id is missing');
+		}
+		return {
+			id: shape.id,
+			boardId: boardId,
+			type: shape.type as ShapesTypes,
+			fillColor: shape.fillColor,
+			strokeColor: shape.strokeColor,
+			strokeWidth: shape.strokeWidth,
+			draggable: shape.draggable,
+			shapeData: shape.shapeData,
+		};
 	}
 }

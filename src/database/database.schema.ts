@@ -200,7 +200,7 @@ export const shapes = pgTable(
 		type: shapesTypesEnum('type').notNull(),
 		fillColor: text('fill_color').notNull(),
 		strokeColor: text('stroke_color').notNull(),
-		strokeWidth: numeric('stroke_width').notNull(),
+		strokeWidth: numeric('stroke_width', { mode: 'number' }).notNull(),
 		draggable: boolean('draggable').notNull(),
 		shapeData: jsonb('shape_data').notNull(),
 	},
