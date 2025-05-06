@@ -1,9 +1,13 @@
-import { ShapeDataMap } from '@board/board.types';
+import { Shape, ShapeDataMap } from '@board/board.types';
 import { BoardStateDto, ShapeDto } from '@board/dto/board.dto';
 import { BoardRepository } from '@board/repository/board.repository';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+	BadRequestException,
+	Injectable,
+	NotFoundException,
+} from '@nestjs/common';
 import { IdService } from '@security/uuid.security';
-import { BoardDatabase } from '@type/index';
+import { BoardDatabase, ShapesDatabase } from '@type/index';
 
 @Injectable()
 export class BoardService {
@@ -67,5 +71,125 @@ export class BoardService {
 		// Add your shape creation logic here
 
 		return shape;
+	}
+
+	/**
+	 * Transforms a ShapesDatabase record into a domain Shape<T>.
+	 * Throws if required shapeData properties are missing or invalid.
+	 */
+	databaseShapeToShape<T extends keyof ShapeDataMap>(
+		record: ShapesDatabase,
+	): Shape<T> {
+		if (!record.id) {
+			throw new BadRequestException('Shape id is missing');
+		}
+		if (!record.type) {
+			throw new BadRequestException('Shape type is missing');
+		}
+		if (!record.shapeData || typeof record.shapeData !== 'object') {
+			throw new BadRequestException('shapeData must be an object');
+		}
+
+		const data = record.shapeData as ShapeDataMap[T];
+
+		switch (record.type) {
+			case 'rectangle':
+				for (const prop of ['x', 'y', 'width', 'height'] as const) {
+					if (
+						typeof (data as ShapeDataMap['rectangle'])[prop] !==
+						'number'
+					) {
+						throw new BadRequestException(
+							`Rectangle missing numeric ${prop}`,
+						);
+					}
+				}
+				break;
+			case 'circle':
+				if (
+					typeof (data as ShapeDataMap['circle']).radius !== 'number'
+				) {
+					throw new BadRequestException(
+						'Circle missing numeric radius',
+					);
+				}
+				break;
+			case 'line':
+			case 'arrow':
+			case 'scribble':
+				if (
+					!Array.isArray(
+						(data as ShapeDataMap['line' | 'arrow' | 'scribble'])
+							.points,
+					)
+				) {
+					throw new BadRequestException(
+						'Line/Arrow/Scribble missing points array',
+					);
+				}
+				break;
+			case 'text':
+				for (const prop of [
+					'x',
+					'y',
+					'text',
+					'fontSize',
+					'width',
+					'padding',
+				] as const) {
+					if (
+						(prop === 'text' &&
+							typeof (data as ShapeDataMap['text'])[prop] !==
+								'string') ||
+						(prop !== 'text' &&
+							typeof (data as ShapeDataMap['text'])[prop] !==
+								'number')
+					) {
+						throw new BadRequestException(`Text missing ${prop}`);
+					}
+				}
+				break;
+			case 'note':
+				for (const prop of [
+					'x',
+					'y',
+					'width',
+					'height',
+					'padding',
+					'text',
+					'fontSize',
+				] as const) {
+					if (
+						(prop === 'text' &&
+							typeof (data as ShapeDataMap['note'])[prop] !==
+								'string') ||
+						(prop !== 'text' &&
+							typeof (data as ShapeDataMap['note'])[prop] !==
+								'number')
+					) {
+						throw new BadRequestException(`Note missing ${prop}`);
+					}
+				}
+				break;
+			default:
+				throw new BadRequestException(
+					`Unsupported shape type ${record.type}`,
+				);
+		}
+
+		const domain: Shape<T> = {
+			id: record.id,
+			type: record.type as T,
+			fillColor: record.fillColor,
+			strokeColor: record.strokeColor,
+			strokeWidth:
+				typeof record.strokeWidth === 'string'
+					? Number.parseFloat(record.strokeWidth)
+					: record.strokeWidth,
+			draggable: record.draggable,
+			shapeData: data,
+		};
+
+		return domain;
 	}
 }

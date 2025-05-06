@@ -44,6 +44,14 @@ export interface ShapeDataMap {
 	note: NoteData;
 }
 
+export interface Board {
+	id: string;
+	width: number;
+	height: number;
+	baseVersion: number;
+	shapes: Shape[];
+}
+
 export class Shape<T extends keyof ShapeDataMap = keyof ShapeDataMap> {
 	id: string;
 	type: T;
@@ -53,4 +61,16 @@ export class Shape<T extends keyof ShapeDataMap = keyof ShapeDataMap> {
 	draggable: boolean;
 
 	shapeData: ShapeDataMap[T];
+}
+
+export enum DeltaOperations {
+	ADD = 'ADD',
+	UPDATE = 'UPDATE',
+	DELETE = 'DELETE',
+}
+
+export interface DeltaOperation {
+	type: DeltaOperations;
+	shape: Shape;
+	version: number;
 }
