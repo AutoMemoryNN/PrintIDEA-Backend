@@ -1,9 +1,9 @@
-import { BoardRepository } from '@board/board.repository';
 import { ShapeDataMap } from '@board/board.types';
+import { BoardStateDto, ShapeDto } from '@board/dto/board.dto';
+import { BoardRepository } from '@board/repository/board.repository';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { IdService } from '@security/uuid.security';
 import { BoardDatabase } from '@type/index';
-import { BoardStateDto, ShapeDto } from './dto/board.dto';
 
 @Injectable()
 export class BoardService {
@@ -54,5 +54,18 @@ export class BoardService {
 			baseVersion: board.baseVersion,
 			shapes: shapesSelected,
 		};
+	}
+
+	async addShapeToBoard(boardId: string, shape: ShapeDto): Promise<ShapeDto> {
+		// Implement shape addition logic here
+		// For now, this is a placeholder implementation
+		const board = await this.boardRepository.findBoardByIdLatest(boardId);
+		if (!board) {
+			throw new NotFoundException(`Board ${boardId} not found`);
+		}
+
+		// Add your shape creation logic here
+
+		return shape;
 	}
 }

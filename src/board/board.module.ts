@@ -1,9 +1,9 @@
 import { BoardGateway } from '@board/board.gateway';
+import { BoardRepository } from '@board/repository/board.repository';
 import { Module } from '@nestjs/common';
 import { SecurityModule } from '@security/security.module';
 import { BoardController } from './board.controller';
-import { BoardRepository } from './board.repository';
-import { BoardService } from './board.service';
+import { BoardService } from './service/board.service';
 
 @Module({
 	imports: [SecurityModule, SecurityModule],

@@ -99,4 +99,29 @@ export class BoardRepository {
 		}
 		return shapes;
 	}
+
+	async addShapeToBoard(
+		shape: ShapesDatabase,
+		boardId: string,
+	): Promise<string> {
+		const s = Schema.shapes;
+
+		const result = await this.db
+			.insert(s)
+			.values({
+				id: shape.id,
+				boardId: boardId,
+				type: shape.type,
+				fillColor: shape.fillColor,
+				strokeColor: shape.strokeColor,
+				strokeWidth: shape.strokeWidth,
+				draggable: shape.draggable,
+				shapeData: shape.shapeData,
+			})
+			.returning({
+				id: s.id,
+			});
+
+		return result[0].id;
+	}
 }

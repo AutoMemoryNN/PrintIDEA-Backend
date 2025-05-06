@@ -1,7 +1,7 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ControllerResponse } from '@type/index';
-import { BoardService } from './board.service';
 import { BoardStateDto } from './dto/board.dto';
+import { BoardService } from './service/board.service';
 
 @Controller('board')
 export class BoardController {

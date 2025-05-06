@@ -1,4 +1,4 @@
-import { BoardService } from '@board/board.service';
+import { BoardService } from '@board/service/board.service';
 import { LogService } from '@log/log.service';
 import {
 	ForbiddenException,
