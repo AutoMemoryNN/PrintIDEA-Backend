@@ -1,20 +1,79 @@
+import { OrgRoles } from '@database/database.schema';
+import { BadRequestException } from '@nestjs/common';
 import {
 	OnGatewayConnection,
 	OnGatewayDisconnect,
 	WebSocketGateway,
 	WebSocketServer,
 } from '@nestjs/websockets';
-
+import { SessionManagerService } from '@session/session.service';
 import { Server, Socket } from 'socket.io';
+import { BoardSessionService } from './service/boardSession.service';
 
 @WebSocketGateway(80, { namespace: 'board', cors: '*' })
 export class BoardGateway implements OnGatewayConnection, OnGatewayDisconnect {
-	handleDisconnect(_client: Socket): void {
-		throw new Error('Method not implemented.');
+	@WebSocketServer() server: Server;
+
+	constructor(
+		private readonly authService: SessionManagerService,
+		private readonly session: BoardSessionService,
+	) {}
+
+	async handleConnection(client: Socket): Promise<void> {
+		const { token, bid } = client.handshake.headers as {
+			token: string;
+			bid: string;
+		};
+
+		try {
+			if (!token || !bid) {
+				client.emit('error', 'Missing token or bid');
+				client.disconnect(true);
+				throw new BadRequestException('Missing token or bid');
+			}
+			const user = this.authService.verifySession(token);
+			if (!user) {
+				client.emit('error', 'Invalid token');
+				client.disconnect(true);
+				throw new BadRequestException('Invalid token');
+			}
+
+			client.data.user = user;
+			let sessionId: string;
+
+			try {
+				sessionId = (await this.session.joinSession(bid)).sessionId;
+				this.session.addParticipant(sessionId, {
+					id: user.id,
+					name: user.name,
+					role: OrgRoles.MEMBER, // TODO: implement role management
+					joinedAt: new Date(),
+				});
+				client.join(sessionId);
+				client.data.user.sessionId = sessionId;
+				console.log(
+					`User ${user.email} connected to board ${bid} with token ${token}`,
+				);
+			} catch (error) {
+				client.emit('error', error);
+				client.disconnect(true);
+				throw new BadRequestException(error.message);
+			}
+		} catch (error) {
+			client.emit('error', error);
+		}
 	}
-	handleConnection(_client: Socket, ..._args: unknown[]): void {
-		throw new Error('Method not implemented.');
+
+	handleDisconnect(client: Socket): void {
+		this.session.leaveSession(
+			client.data.user.sessionId,
+			client.data.user.id,
+		);
+		client.leave(client.data.user.sessionId);
+		console.log(
+			`User ${client.data.user.email} disconnected from session ${client.data.user.sessionId}`,
+		);
+
+		client.disconnect(true);
 	}
-	@WebSocketServer()
-	server: Server;
 }
