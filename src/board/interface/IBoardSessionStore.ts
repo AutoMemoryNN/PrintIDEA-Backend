@@ -6,6 +6,7 @@ export interface ISessionStore {
 
 	createSession(boardId: string, stateId: string): Promise<BoardSession>;
 
+	getSessionByBoardId(boardId: string): Promise<BoardSession>;
 	removeSession(sessionId: string): Promise<void>;
 
 	addParticipant(

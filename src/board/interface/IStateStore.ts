@@ -1,5 +1,5 @@
 // src/board/interface/IStateRepository.ts
-import { Board, DeltaOperation, Shape } from '@board/board.types';
+import { Board, DeltaOperation } from '@board/board.types';
 
 // biome-ignore lint/style/useNamingConvention: "Naming convention is not important in this case"
 export interface IStateRepository {
@@ -7,7 +7,7 @@ export interface IStateRepository {
 
 	applyDelta(stateId: string, delta: DeltaOperation): Promise<Board>;
 
-	loadState(boardMeta: Board, shapes: Shape[]): Promise<Board>;
+	loadState(boardMeta: Board): Promise<Board>;
 
 	deleteState(stateId: string): Promise<void>;
 }

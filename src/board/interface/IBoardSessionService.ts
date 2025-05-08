@@ -1,5 +1,4 @@
-import { BoardStateDto } from '@board/dto/board.dto';
-import { Participant } from '@board/interface/IBoardSessionStore';
+import { BoardSession, Participant } from '@board/interface/IBoardSessionStore';
 
 // biome-ignore lint/style/useNamingConvention: "Naming convention is not important in this case"
 export interface ISessionService {
@@ -8,7 +7,7 @@ export interface ISessionService {
 	 * - If a session exists, returns its current state.
 	 * - Otherwise creates new session initialized with boardState.
 	 */
-	joinSession(boardId: string): Promise<BoardStateDto>;
+	joinSession(boardId: string): Promise<BoardSession>;
 
 	/** Leave a session; if last participant, optionally close it. */
 	leaveSession(sessionId: string, participantId: string): Promise<void>;
