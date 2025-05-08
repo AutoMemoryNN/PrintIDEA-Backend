@@ -5,10 +5,11 @@ import { InMemoryBoardSession } from '@board/repository/boardSession.repository'
 import { BoardService } from '@board/service/board.service';
 import { LogModule } from '@log/log.module';
 import { Module } from '@nestjs/common';
+import { OrganizationModule } from '@org/organization.module';
 import { SecurityModule } from '@security/security.module';
 
 @Module({
-	imports: [SecurityModule, LogModule],
+	imports: [SecurityModule, LogModule, OrganizationModule],
 	providers: [
 		BoardGateway,
 		BoardService,

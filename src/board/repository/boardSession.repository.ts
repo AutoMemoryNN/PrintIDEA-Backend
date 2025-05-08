@@ -14,6 +14,16 @@ export class InMemoryBoardSession implements ISessionStore {
 		private readonly logService: LogService,
 	) {}
 
+	async getSessionByBoardId(boardId: string): Promise<BoardSession> {
+		const session = await this.sessions.get(boardId);
+		if (!session) {
+			this.logService.error(`No session for board ${boardId}`);
+			return;
+		}
+		this.logService.log(`Session ${boardId} retrieved`);
+		return session;
+	}
+
 	private sessions = new Map<string, BoardSession>();
 
 	async getSession(sessionId: string): Promise<BoardSession> {
