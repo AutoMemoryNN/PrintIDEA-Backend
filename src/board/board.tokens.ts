@@ -1,0 +1,2 @@
+export const STATE_SERVICE = 'STATE_SERVICE';
+export const STATE_REPOSITORY = 'STATE_REPOSITORY';

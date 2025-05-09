@@ -1,16 +1,18 @@
+import { STATE_SERVICE } from '@board/board.tokens';
+import { Board, DeltaOperation } from '@board/board.types';
 import { ISessionService } from '@board/interface/IBoardSessionService';
 import { BoardSession, Participant } from '@board/interface/IBoardSessionStore';
 import { IStateService } from '@board/interface/IStateService';
 import { InMemoryBoardSession } from '@board/repository/boardSession.repository';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { OrganizationService } from '@org/organization.service';
 
 @Injectable()
 export class BoardSessionService implements ISessionService {
 	constructor(
 		private readonly boardSessionRepo: InMemoryBoardSession,
-		private readonly stateService: IStateService,
-		private readonly _organizationService: OrganizationService, // TODO: implement user verification for organization
+		@Inject(STATE_SERVICE) private readonly stateService: IStateService,
+		private readonly _organizationService: OrganizationService,
 	) {}
 
 	/**
@@ -91,5 +93,29 @@ export class BoardSessionService implements ISessionService {
 	async closeSession(sessionId: string): Promise<void> {
 		await this.boardSessionRepo.removeSession(sessionId);
 		await this.stateService.clearState(sessionId);
+	}
+
+	async getBoardState(sessionId: string): Promise<Board> {
+		const session = await this.boardSessionRepo.getSession(sessionId);
+		if (!session) {
+			throw new NotFoundException(`Session ${sessionId} not found`);
+		}
+		return await this.stateService.getState(session.boardId);
+	}
+
+	async applyDeltas(
+		sessionId: string,
+		delta: DeltaOperation[],
+		expectedVersion: number,
+	): Promise<Board> {
+		const session = await this.boardSessionRepo.getSession(sessionId);
+		if (!session) {
+			throw new NotFoundException(`Session ${sessionId} not found`);
+		}
+		return await this.stateService.applyDeltas(
+			session.boardId,
+			delta,
+			expectedVersion,
+		);
 	}
 }

@@ -1,16 +1,16 @@
+import { STATE_REPOSITORY } from '@board/board.tokens';
 import { Board, DeltaOperation } from '@board/board.types';
-import { BoardStateDto } from '@board/dto/board.dto';
 import { IStateService } from '@board/interface/IStateService';
 import { IStateRepository } from '@board/interface/IStateStore';
 import { BoardRepository } from '@board/repository/board.repository';
 import { LogService } from '@log/log.service';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { BoardService } from './board.service';
 
 @Injectable()
 export class StateService implements IStateService {
 	constructor(
-		private readonly stateRepo: IStateRepository,
+		@Inject(STATE_REPOSITORY) private readonly stateRepo: IStateRepository,
 		private readonly boardRepo: BoardRepository,
 		private readonly boardService: BoardService,
 		private readonly logService: LogService,
@@ -91,7 +91,7 @@ export class StateService implements IStateService {
 		stateId: string,
 		deltas: DeltaOperation[],
 		expectedVersion: number,
-	): Promise<BoardStateDto> {
+	): Promise<Board> {
 		this.logService.log(
 			`StateService: Applying ${deltas.length} deltas to board ${stateId} at version ${expectedVersion}`,
 		);
@@ -119,7 +119,7 @@ export class StateService implements IStateService {
 		this.logService.log(
 			`StateService: Successfully applied deltas to board ${stateId}`,
 		);
-		return null; //TODO: Convert to DTO
+		return board;
 	}
 
 	/**

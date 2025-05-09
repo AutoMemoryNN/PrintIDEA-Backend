@@ -1,5 +1,4 @@
 import { Board, DeltaOperation } from '@board/board.types';
-import { BoardStateDto } from '@board/dto/board.dto';
 
 /**
  * IStateService encapsulates all board state operations: reading full state,
@@ -28,7 +27,7 @@ export interface IStateService {
 		stateId: string,
 		deltas: DeltaOperation[],
 		expectedVersion: number,
-	): Promise<BoardStateDto>;
+	): Promise<Board>;
 
 	/**
 	 * Save the current state to persistent storage.

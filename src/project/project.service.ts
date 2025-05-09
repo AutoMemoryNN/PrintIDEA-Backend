@@ -14,7 +14,7 @@ import { OrgRoles, ProjectDatabase } from '@type/index';
 
 @Injectable()
 export class ProjectService {
-	private readonly logger = new LogService(ProjectService.name); // use LogService for logging
+	private readonly logger = new LogService(ProjectService.name);
 
 	constructor(
 		private readonly projectRepository: ProjectRepository,

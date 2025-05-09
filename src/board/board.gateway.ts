@@ -1,8 +1,10 @@
 import { OrgRoles } from '@database/database.schema';
 import { BadRequestException } from '@nestjs/common';
 import {
+	ConnectedSocket,
 	OnGatewayConnection,
 	OnGatewayDisconnect,
+	SubscribeMessage,
 	WebSocketGateway,
 	WebSocketServer,
 } from '@nestjs/websockets';
@@ -76,4 +78,35 @@ export class BoardGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
 		client.disconnect(true);
 	}
+
+	@SubscribeMessage('get_board_state')
+	async handleGetBoardState(
+		@ConnectedSocket() client: Socket,
+	): Promise<void> {
+		const sessionId = client.data.user.sessionId;
+
+		try {
+			const stateId = await this.session.getSessionStateId(sessionId);
+			if (!stateId) {
+				client.emit('error', 'Session not found');
+				return;
+			}
+			const boardState = await this.session.getBoardState(stateId);
+			client.emit('board_state', boardState);
+		} catch (_error) {
+			client.emit('error', 'Could not retrieve board state');
+		}
+	}
+
+	// @SubscribeMessage("test_delta")
+	// async handleTestDelta(
+	// 	@ConnectedSocket() client: Socket,
+	// 	data: any,
+	// ): Promise<void> {
+	// 	const sessionId = client.data.user.sessionId;
+	// 	if (!sessionId) {
+	// 		client.emit('error', 'Session not found');
+	// 		return;
+	// 	}
+	// 	this.server.to(sessionId).emit('test_delta', data);
 }
