@@ -49,4 +49,18 @@ export class LoginController {
 		await this.sessionManager.removeSession(token);
 		return { message: 'Session removed successfully' };
 	}
+
+	@Get('refresh')
+	@ApiOperation({
+		summary: 'Refresh the access token',
+	})
+	async refreshToken(@AccessToken() token: string): Promise<{ jwt: string }> {
+		if (!this.sessionManager.verifySession(token)) {
+			throw new BadRequestException(
+				'Invalid token. Please log in again.',
+			);
+		}
+		const newToken = await this.sessionManager.refreshSession(token);
+		return { jwt: newToken };
+	}
 }

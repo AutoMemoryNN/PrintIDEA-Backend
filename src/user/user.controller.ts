@@ -1,8 +1,9 @@
 import { UserRoles } from '@database/database.schema';
-import { Controller, Delete, Get, Param } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserId, UserRole } from '@security/security.decorators';
 import { ControllerResponse } from '@type/index';
+import { UserBasicDto } from './user.dto';
 import { UserService } from './user.service';
 
 @ApiTags('users')
@@ -34,6 +35,28 @@ export class UserController {
 		}
 		return {
 			message: `User with email ${email} deleted successfully`,
+		};
+	}
+
+	@Patch(':id')
+	async updateUser(
+		@Param('id') id: string,
+		@UserId() userId: string,
+		@Body() newUser: UserBasicDto,
+	): Promise<ControllerResponse> {
+		try {
+			await this.userService.updateUser(
+				id,
+				userId,
+				newUser.alias,
+				newUser.name,
+				newUser.email,
+			);
+		} catch (error) {
+			throw new Error(`Error updating user: ${error.message}`);
+		}
+		return {
+			message: `User with id ${id} updated successfully`,
 		};
 	}
 }

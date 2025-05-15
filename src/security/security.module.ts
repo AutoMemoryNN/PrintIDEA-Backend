@@ -8,10 +8,11 @@ import {
 import { SessionAuthMiddleware } from '@security/security.middleware';
 import { SessionModule } from '@session/session.module';
 import { SessionManagerService } from '@session/session.service';
+import { UserModule } from '@user/user.module';
 import { IdService } from './uuid.security';
 
 @Module({
-	imports: [SessionModule, LogModule],
+	imports: [SessionModule, LogModule, UserModule],
 	providers: [SessionManagerService, IdService],
 	exports: [SessionManagerService, IdService],
 })

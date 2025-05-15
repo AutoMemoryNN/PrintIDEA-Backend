@@ -62,7 +62,7 @@ export class LoginService {
 				this.parseGoogleUserData(googleUser, UserRoles.CLIENT),
 			);
 
-			const jwt = this.sessionManager.createSession(user);
+			const jwt = await this.sessionManager.createSession(user.id);
 			this.logger.log(
 				`Successfully authenticated Google user: ${user.email}`,
 			);
@@ -119,7 +119,7 @@ export class LoginService {
 				this.parseMicrosoftUserData(microsoftUser, UserRoles.CLIENT),
 			);
 
-			const jwt = this.sessionManager.createSession(user);
+			const jwt = await this.sessionManager.createSession(user.id);
 			this.logger.log(
 				`Successfully authenticated Microsoft user: ${user.email}`,
 			);

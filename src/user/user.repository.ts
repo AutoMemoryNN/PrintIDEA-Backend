@@ -17,6 +17,37 @@ export class UserRepository {
 		return result[0];
 	}
 
+	getUserById(id: string): Promise<UserDatabase> {
+		const users = Schema.users;
+
+		return this.db
+			.select({
+				id: users.id,
+				name: users.name,
+				email: users.email,
+				alias: users.alias,
+				role: users.role,
+			})
+			.from(users)
+			.where(eq(users.id, id))
+			.then((result) => result[0]);
+	}
+
+	async updateUser(user: UserDatabase): Promise<UserDatabase> {
+		const users = Schema.users;
+		const result = await this.db
+			.update(users)
+			.set({
+				name: user.name,
+				email: user.email,
+				alias: user.alias,
+				role: user.role,
+			})
+			.where(eq(users.id, user.id))
+			.returning();
+		return result[0];
+	}
+
 	async getUserByEmail(email: string): Promise<UserDatabase> {
 		const users = Schema.users;
 		const result = await this.db

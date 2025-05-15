@@ -5,6 +5,7 @@ import {
 	UnauthorizedException,
 } from '@nestjs/common';
 import type { UserDatabase } from '@type/index';
+import { UserService } from '@user/user.service';
 import {
 	JsonWebTokenError,
 	NotBeforeError,
@@ -19,11 +20,12 @@ export class SessionManagerService {
 	constructor(
 		private readonly memorySession: MemorySessionManager,
 		private readonly logService: LogService,
+		private readonly userService: UserService,
 	) {}
 
 	readonly context = 'SessionManagerService';
 
-	createSession(payload: UserDatabase): string {
+	async createSession(userId: string): Promise<string> {
 		const privateKeyPem = process.env.PRIVATE_JWT_KEY;
 
 		if (!privateKeyPem) {
@@ -35,6 +37,8 @@ export class SessionManagerService {
 				'Internal server error: missing private key.',
 			);
 		}
+
+		const payload = await this.userService.getUserById(userId);
 
 		try {
 			const expiresIn =
@@ -106,6 +110,38 @@ export class SessionManagerService {
 			);
 			throw new InternalServerErrorException(
 				'Unexpected token validation error.',
+			);
+		}
+	}
+
+	async refreshSession(token: string): Promise<string> {
+		const publicKeyPem = process.env.PUBLIC_JWT_KEY;
+
+		if (!publicKeyPem) {
+			this.logService.fatal(
+				'PUBLIC_JWT_KEY is not defined.',
+				this.context,
+			);
+			throw new InternalServerErrorException(
+				'Internal server error: missing public key.',
+			);
+		}
+		try {
+			const decoded = verify(token, publicKeyPem, {
+				algorithms: ['RS256'],
+			}) as UserDatabase;
+
+			const newToken = await this.createSession(decoded.id);
+			this.removeSession(token);
+
+			return newToken;
+		} catch (error) {
+			this.logService.error(
+				`Error refreshing session: ${error.message}`,
+				this.context,
+			);
+			throw new InternalServerErrorException(
+				'Failed to refresh session.',
 			);
 		}
 	}
