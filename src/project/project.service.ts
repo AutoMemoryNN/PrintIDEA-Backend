@@ -60,9 +60,16 @@ export class ProjectService {
 			);
 			return projects;
 		} catch (error) {
+			if (error instanceof ForbiddenException) {
+				throw error;
+			}
+
 			this.logger.error(
 				`Failed to fetch projects for organization ${organizationId}: ${error.message}`,
 				error.stack,
+			);
+			throw new InternalServerErrorException(
+				`Error retrieving projects: ${error.message}`,
 			);
 		}
 	}
@@ -289,6 +296,35 @@ export class ProjectService {
 			);
 			throw new InternalServerErrorException(
 				`Error updating project: ${error.message}`,
+			);
+		}
+	}
+
+	/**
+	 * Get a project by its ID without validation
+	 *
+	 * @param id The ID of the project to retrieve
+	 * @returns The project if found, null otherwise
+	 */
+	async getProjectById(id: string): Promise<ProjectDatabase | null> {
+		this.logger.log(`Fetching project with ID: ${id}`);
+
+		try {
+			const project = await this.projectRepository.getProjectById(id);
+
+			if (!project) {
+				this.logger.warn(`Project with ID ${id} not found`);
+				return null;
+			}
+
+			return project;
+		} catch (error) {
+			this.logger.error(
+				`Error retrieving project ${id}: ${error.message}`,
+				error.stack,
+			);
+			throw new InternalServerErrorException(
+				`Error retrieving project: ${error.message}`,
 			);
 		}
 	}
