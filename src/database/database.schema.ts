@@ -160,12 +160,12 @@ export const tasks = pgTable('tasks', {
 	id: varchar('id', { length: 36 }).primaryKey(),
 	title: varchar('title', { length: 100 }).notNull(),
 	description: text('description').notNull(),
-	tag: varchar('tag', { length: 50 }),
-	priority: taskPrioritiesEnum('priority'),
+	tag: varchar('tag', { length: 50 }).notNull(),
+	priority: taskPrioritiesEnum('priority').notNull(),
 	initDate: timestamp('init_date').notNull(),
 	endDate: timestamp('end_date').notNull(),
 	status: taskStatusEnum('status').notNull(),
-	createdAt: timestamp('created_at').defaultNow().notNull(),
+	createdAt: timestamp('created_at').notNull(),
 	projectId: varchar('project_id', { length: 36 })
 		.notNull()
 		.references(() => projects.id),
