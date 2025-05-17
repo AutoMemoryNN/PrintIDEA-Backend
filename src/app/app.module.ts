@@ -5,6 +5,7 @@ import { LoginModule } from '@login/login.module';
 import { Module } from '@nestjs/common';
 import { OrganizationModule } from '@org/organization.module';
 import { ProjectModule } from '@projects/project.module';
+import { TaskModule } from '@task/task.module';
 import { UserModule } from '@user/user.module';
 import { SecurityModule } from 'src/security/security.module';
 
@@ -18,6 +19,7 @@ import { SecurityModule } from 'src/security/security.module';
 		DatabaseModule,
 		ProjectModule,
 		BoardModule,
+		TaskModule,
 	],
 })
 export class AppModule {}

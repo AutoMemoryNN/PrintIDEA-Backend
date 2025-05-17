@@ -28,7 +28,8 @@
 			"@security/*": ["src/security/*"],
 			"@org/*": ["src/organization/*"],
 			"@projects/*": ["src/project/*"],
-			"@board/*": ["src/board/*"]
+			"@board/*": ["src/board/*"],
+			"@task/*": ["src/tasks/*"]
 		}
 	},
 	"include": ["src/**/*.ts"],
